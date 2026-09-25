@@ -1,0 +1,140 @@
+# SPDX-FileCopyrightText: 2026 Blagovest Petrov <blagovest@petrovs.info>
+# SPDX-FileCopyrightText: 2026 Vute Tech Ltd. <https://vute.tech>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Checks, tests and builds the extension on every push and pull request.
+#
+# Pushes to master and to release branches (release, release/*) store the
+# built .oxt as a workflow artifact. A vX.Y.Z tag does the same and then
+# publishes it on the GitHub release of that tag: creating the release when
+# only the tag was pushed, or attaching the files to a release made in the
+# web interface. Nothing else publishes.
+#
+# The version comes from git (build-oxt.sh): the tag on a release, and
+# <last tag>.<commits since it> on branches.
+name: CI
+
+on:
+  push:
+    branches: [master, release, "release/**"]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: REUSE compliance
+        run: pipx run reuse lint
+      - name: shellcheck
+        run: git ls-files -z -- '*.sh' | xargs -0 shellcheck
+      - name: Python compiles
+        run: git ls-files -z -- '*.py' | xargs -0 python3 -m py_compile
+      - name: Tests
+        run: python3 test-core.py
+
+  build:
+    name: build
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+      file: ${{ steps.build.outputs.file }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # build-oxt.sh derives branch versions from the tags.
+          fetch-depth: 0
+      - name: Check the tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::release tags must look like v1.2.3, got '$TAG'"
+            exit 1
+          fi
+      - name: Build the .oxt
+        id: build
+        run: |
+          file="$(./build-oxt.sh)"
+          version="$(unzip -p "$file" description.xml | sed -n 's/.*<version value="\([^"]*\)".*/\1/p')"
+          if [ "${GITHUB_REF_TYPE}" = tag ] && [ "$version" != "${GITHUB_REF_NAME#v}" ]; then
+            echo "::error::built version $version does not match the tag ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+          echo "Built $(basename "$file"), version $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "file=$(basename "$file")" >> "$GITHUB_OUTPUT"
+          (cd dist && sha256sum "$(basename "$file")" > "$(basename "$file").sha256")
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dragoman-libreoffice-${{ steps.build.outputs.version }}
+          path: dist/
+          if-no-files-found: error
+
+  # Installs the built extension into a real LibreOffice: catches a broken
+  # manifest, description or Python component that the tests cannot see.
+  install:
+    name: install in LibreOffice
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dragoman-libreoffice-${{ needs.build.outputs.version }}
+          path: dist
+      - name: Install LibreOffice (headless, with Python scripting)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libreoffice-core-nogui libreoffice-writer-nogui \
+            python3-uno libreoffice-script-provider-python
+      - name: unopkg add
+        env:
+          FILE: ${{ needs.build.outputs.file }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          profile="$(mktemp -d)"
+          unopkg add --suppress-license "-env:UserInstallation=file://$profile" "dist/$FILE"
+          unopkg list "-env:UserInstallation=file://$profile" | tee list.txt
+          grep -q "Identifier: dev.l10n_bg.dragomand.libreoffice" list.txt
+          grep -q "Version: $VERSION" list.txt
+          # The bundle, its configuration and the Python component.
+          [ "$(grep -c 'is registered: yes' list.txt)" -eq 3 ] || {
+            echo "::error::not every part of the extension registered"
+            exit 1
+          }
+
+  publish:
+    name: publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [checks, build, install]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dragoman-libreoffice-${{ needs.build.outputs.version }}
+          path: dist
+      - name: Attach to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --verify-tag --generate-notes \
+              --title "Dragoman LibreOffice extension ${TAG#v}"
+          fi

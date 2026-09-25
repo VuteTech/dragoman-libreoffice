@@ -1,0 +1,5 @@
+Translate the selection offline through the dragomand daemon
+(Mozilla's Firefox translation models, fully local). Adds a Translate
+menu: translate the selection with the saved language pair, choose
+languages, or swap the direction. Requires the dragomand package;
+the first use of a language pair downloads its model.

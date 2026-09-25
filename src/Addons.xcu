@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 Blagovest Petrov <blagovest@petrovs.info>
+  SPDX-FileCopyrightText: 2026 Vute Tech Ltd. <https://vute.tech>
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry"
+                    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                    oor:name="Addons" oor:package="org.openoffice.Office">
+  <node oor:name="AddonUI">
+    <!-- Tools menu: LibreOffice places AddonMenu entries under Tools. -->
+    <node oor:name="AddonMenu">
+      <node oor:name="dev.l10n_bg.dragomand.libreoffice.menu" oor:op="replace">
+        <prop oor:name="Title" oor:type="xs:string">
+          <value xml:lang="en-US">T~ranslate</value>
+          <value>Translate</value>
+        </prop>
+        <prop oor:name="Context" oor:type="xs:string">
+          <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+        </prop>
+        <node oor:name="Submenu">
+          <node oor:name="m01" oor:op="replace">
+            <prop oor:name="URL" oor:type="xs:string">
+              <value>service:dev.l10n_bg.dragomand.LibreOffice?translate</value>
+            </prop>
+            <prop oor:name="Title" oor:type="xs:string">
+              <value xml:lang="en-US">Translate ~selection</value>
+              <value>Translate selection</value>
+            </prop>
+            <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          </node>
+          <node oor:name="m02" oor:op="replace">
+            <prop oor:name="URL" oor:type="xs:string">
+              <value>service:dev.l10n_bg.dragomand.LibreOffice?choose</value>
+            </prop>
+            <prop oor:name="Title" oor:type="xs:string">
+              <value xml:lang="en-US">Translate selection (choose ~languages)...</value>
+              <value>Translate selection (choose languages)...</value>
+            </prop>
+            <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          </node>
+          <node oor:name="m03" oor:op="replace">
+            <prop oor:name="URL" oor:type="xs:string">
+              <value>service:dev.l10n_bg.dragomand.LibreOffice?swap</value>
+            </prop>
+            <prop oor:name="Title" oor:type="xs:string">
+              <value xml:lang="en-US">S~wap translation direction</value>
+              <value>Swap translation direction</value>
+            </prop>
+            <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          </node>
+        </node>
+      </node>
+    </node>
+    <!-- A "Translate" toolbar with the three commands. -->
+    <node oor:name="OfficeToolBar">
+      <node oor:name="dev.l10n_bg.dragomand.libreoffice.toolbar" oor:op="replace">
+        <prop oor:name="Title" oor:type="xs:string">
+          <value xml:lang="en-US">Translate</value>
+          <value>Translate</value>
+        </prop>
+        <node oor:name="t01" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?translate</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Translate selection</value>
+            <value>Translate selection</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+        <node oor:name="t02" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?choose</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Choose languages and translate</value>
+            <value>Choose languages and translate</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+        <node oor:name="t03" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?swap</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Swap translation direction</value>
+            <value>Swap translation direction</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+      </node>
+    </node>
+    <!-- The same three commands for the Tabbed UI ("ribbon"): LibreOffice
+         merges OfficeNotebookBar items into the notebookbar's Extension tab.
+         OfficeToolBar above only produces the classic add-on toolbar. -->
+    <node oor:name="OfficeNotebookBar">
+      <node oor:name="dev.l10n_bg.dragomand.libreoffice.notebookbar" oor:op="replace">
+        <node oor:name="n01" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?translate</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Translate selection</value>
+            <value>Translate selection</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+        <node oor:name="n02" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?choose</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Choose languages and translate</value>
+            <value>Choose languages and translate</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+        <node oor:name="n03" oor:op="replace">
+          <prop oor:name="URL" oor:type="xs:string">
+            <value>service:dev.l10n_bg.dragomand.LibreOffice?swap</value>
+          </prop>
+          <prop oor:name="Title" oor:type="xs:string">
+            <value xml:lang="en-US">Swap translation direction</value>
+            <value>Swap translation direction</value>
+          </prop>
+          <prop oor:name="Target" oor:type="xs:string"><value>_self</value></prop>
+          <prop oor:name="Context" oor:type="xs:string">
+            <value>com.sun.star.text.TextDocument,com.sun.star.sheet.SpreadsheetDocument</value>
+          </prop>
+        </node>
+      </node>
+    </node>
+    <!-- Icons for the commands above (%origin% = the extension directory). -->
+    <node oor:name="Images">
+      <node oor:name="dev.l10n_bg.dragomand.img.translate" oor:op="replace">
+        <prop oor:name="URL" oor:type="xs:string">
+          <value>service:dev.l10n_bg.dragomand.LibreOffice?translate</value>
+        </prop>
+        <node oor:name="UserDefinedImages">
+          <prop oor:name="ImageSmallURL" oor:type="xs:string">
+            <value>%origin%/icons/translate_16.png</value>
+          </prop>
+          <prop oor:name="ImageBigURL" oor:type="xs:string">
+            <value>%origin%/icons/translate_26.png</value>
+          </prop>
+        </node>
+      </node>
+      <node oor:name="dev.l10n_bg.dragomand.img.choose" oor:op="replace">
+        <prop oor:name="URL" oor:type="xs:string">
+          <value>service:dev.l10n_bg.dragomand.LibreOffice?choose</value>
+        </prop>
+        <node oor:name="UserDefinedImages">
+          <prop oor:name="ImageSmallURL" oor:type="xs:string">
+            <value>%origin%/icons/choose_16.png</value>
+          </prop>
+          <prop oor:name="ImageBigURL" oor:type="xs:string">
+            <value>%origin%/icons/choose_26.png</value>
+          </prop>
+        </node>
+      </node>
+      <node oor:name="dev.l10n_bg.dragomand.img.swap" oor:op="replace">
+        <prop oor:name="URL" oor:type="xs:string">
+          <value>service:dev.l10n_bg.dragomand.LibreOffice?swap</value>
+        </prop>
+        <node oor:name="UserDefinedImages">
+          <prop oor:name="ImageSmallURL" oor:type="xs:string">
+            <value>%origin%/icons/swap_16.png</value>
+          </prop>
+          <prop oor:name="ImageBigURL" oor:type="xs:string">
+            <value>%origin%/icons/swap_26.png</value>
+          </prop>
+        </node>
+      </node>
+    </node>
+  </node>
+</oor:component-data>

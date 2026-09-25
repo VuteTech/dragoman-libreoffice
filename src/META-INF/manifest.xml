@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 Blagovest Petrov <blagovest@petrovs.info>
+  SPDX-FileCopyrightText: 2026 Vute Tech Ltd. <https://vute.tech>
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
+  <manifest:file-entry manifest:media-type="application/vnd.sun.star.configuration-data"
+                       manifest:full-path="Addons.xcu"/>
+  <manifest:file-entry manifest:media-type="application/vnd.sun.star.uno-component;type=Python"
+                       manifest:full-path="dragoman_plugin.py"/>
+</manifest:manifest>

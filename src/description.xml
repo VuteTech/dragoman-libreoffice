@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 Blagovest Petrov <blagovest@petrovs.info>
+  SPDX-FileCopyrightText: 2026 Vute Tech Ltd. <https://vute.tech>
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<description xmlns="http://openoffice.org/extensions/description/2006"
+             xmlns:d="http://openoffice.org/extensions/description/2006"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+  <identifier value="dev.l10n_bg.dragomand.libreoffice"/>
+  <version value="0.0.0"/>
+  <display-name>
+    <name lang="en-US">Dragomand offline translation</name>
+  </display-name>
+  <icon>
+    <default xlink:href="icons/extension_42.png"/>
+  </icon>
+  <extension-description>
+    <src lang="en-US" xlink:href="pkg-description.txt"/>
+  </extension-description>
+  <dependencies>
+    <OpenOffice.org-minimal-version value="4.1" d:name="OpenOffice.org 4.1"/>
+  </dependencies>
+</description>
